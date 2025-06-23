@@ -30,7 +30,7 @@
         const fields = row.split(',');
         if (fields.length < 11) return;
 
-        const [Timestamp, Location, Prices, Food, Mountains, Sea, Culture, Work, Life, latStr, lonStr] = fields.map(f => f.trim());
+        const [Timestamp, Location, Prices, Food, Mountains, Sea, Culture, Work, Life, latStr, lonStr, ff] = fields.map(f => f.trim());
         const lat = parseFloat(latStr);
         const lon = parseFloat(lonStr);
 
@@ -42,7 +42,7 @@
               locations: [],
               count: 0,
               sum: {
-                Prices: 0, Food: 0, Mountains: 0, Sea: 0, Culture: 0, Work: 0, Life: 0
+                Prices: 0, Food: 0, Mountains: 0, Sea: 0, Culture: 0, Work: 0, Life: 0, ff: 0
               }
             };
           }
@@ -56,6 +56,7 @@
           grouped[key].sum.Culture += +Culture;
           grouped[key].sum.Work += +Work;
           grouped[key].sum.Life += +Life;
+          grouped[key].sum.ff += +ff;
         }
       });
 
@@ -80,7 +81,8 @@
             ${starRow("Sea", avg.Sea)}
             ${starRow("Culture", avg.Culture)}
             ${starRow("Quality of Life", avg.Life)}
-            ${starRow("Quality of Work", avg.Work)}
+            ${starRow("Quality of Work", avg.Work)}            
+            ${starRow("Quality of Fyiga", avg.ff)}
           </div>
         `;
 
