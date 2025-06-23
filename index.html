@@ -60,9 +60,9 @@
         }
       });
 
-      const starRow = (label, value) => {
+      const starRow = (label, value, icon) => {
         const rounded = Math.round(value);
-        const filled = '⭐️'.repeat(rounded);
+        const filled = icon.repeat(rounded);
         return `<strong>${label}:</strong> ${filled}<br>`;
       };
 
@@ -75,14 +75,14 @@
         const popup = `
           <div>
             <h3>${data.locations.join(', ')}</h3>
-            ${starRow("Price", avg.Prices)}
-            ${starRow("Food", avg.Food)}
-            ${starRow("Mountains", avg.Mountains)}
-            ${starRow("Sea", avg.Sea)}
-            ${starRow("Culture", avg.Culture)}
-            ${starRow("Quality of Life", avg.Life)}
-            ${starRow("Quality of Work", avg.Work)}            
-            ${starRow("Quality of Fyiga", avg.ff)}
+            ${starRow("Price", avg.Prices, "💰")}
+            ${starRow("Food", avg.Food, "🍕")}
+            ${starRow("Mountains", avg.Mountains, "🏔️")}
+            ${starRow("Sea", avg.Sea, "🌊")}
+            ${starRow("Culture", avg.Culture, "🗽")}
+            ${starRow("Quality of Life", avg.Life, "🚃")}
+            ${starRow("Quality of Work", avg.Work, "👷‍♂️")}            
+            ${starRow("Quality of Fyiga", avg.ff, "🍆")}
           </div>
         `;
 
