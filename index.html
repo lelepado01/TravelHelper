@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interactive Map</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 90vh; width: 100%; }
+  </style>
+</head>
+<body>
+  <h2>Interactive Map from Google Sheets</h2>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([20, 0], 2); // World view
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    function getPosition(location) {
+
+    }
+
+    // Load data from published Google Sheet (CSV format)
+    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQIxvVqg-4QZqj4-naN9ytWFf_L9xcKS9NZGWTaNbUzIu8HFyQQCbgAwJZQa-VKGigwPV4W8p8iKt-Y/pub?gid=2124608693&single=true&output=csv')
+      .then(response => response.text())
+    .then(csv => {
+      const rows = csv.split('\n').slice(1); // skip header
+      rows.forEach(row => {
+        const fields = row.split(',');
+
+        const [Timestamp, Location, Prices, Food, Mountains, Sea, Culture, Work, Life, latStr, lonStr] = fields;
+        const lat = parseFloat(latStr);
+        const lon = parseFloat(lonStr);
+
+        if (!isNaN(lat) && !isNaN(lon)) {
+          const starRow = (label, value) => {
+            console.log(value); 
+            const filled = '⭐️'.repeat(value);
+            return `<strong>${label}:</strong> ${filled}<br>`;
+          };
+
+          const popup = `
+            <div>
+              <h3>${Location}</h3>
+              ${starRow("Price", + Prices)}
+              ${starRow("Food", + Food)}
+              ${starRow("Mountains", + Mountains)}
+              ${starRow("Sea", + Sea)}
+              ${starRow("Culture", + Culture)}
+              ${starRow("Quality of Life", + Life)}
+              ${starRow("Quality of Work", + Work)}
+            </div>
+          `;
+          
+          L.marker([lat, lon])
+            .addTo(map)
+            .bindPopup(popup);
+        }
+      });
+    });
+    </script>
+</body>
+</html>
