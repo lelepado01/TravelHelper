@@ -205,11 +205,11 @@
         var avg = Object.fromEntries(
           Object.entries(data.sum).map(([k, v]) => [k, v / data.count])
         );
-        avg.Name = data.locations.join(', '); 
+        avg.Name = data.locations[0]; 
 
         const popup = `
           <div>
-            <h3>${data.locations.join(', ')}</h3>
+            <h3>${avg.Name}</h3>
             ${starRow("Price", avg.Prices, "💰")}
             ${starRow("Food", avg.Food, "🍕")}
             ${starRow("Mountains", avg.Mountains, "🏔️")}
