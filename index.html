@@ -10,11 +10,145 @@
   </style>
 </head>
 <body>
-  <h2>Travel Helper 4 Dottorandi</h2>
-  <div id="map"></div>
+  <h2 style="
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  color: white;
+  margin: 0;
+  padding: 15px 0;
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  width: 100%;
+">
+  🌍 Travel Helper 4 Dottorandi
+</h2>
+<div style="display: flex; height: 90vh; font-family: Arial, sans-serif;">
+
+  <!-- Left Sidebar -->
+  <div id="left-sidebar" style="
+      width: 220px; 
+      background: #ffffff; 
+      padding: 15px; 
+      border-radius: 12px; 
+      margin: 10px; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;">
+    <h3 style="margin-top: 0; font-size: 1.1em; color: #333;">Best Places Ranked</h3>
+    <ul style="list-style: none; padding: 0; margin: 0;" id="blocks_container"></ul>
+  </div>
+
+  <!-- Map -->
+  <div id="map" style="flex: 1; margin: 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+
+  <!-- Right Sidebar -->
+  <div id="right-sidebar" style="
+      width: 260px; 
+      background: #ffffff; 
+      padding: 15px; 
+      border-radius: 12px; 
+      margin: 10px; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;">
+    <h3 style="margin-top: 0; font-size: 1.1em; color: #333;">Parameters</h3>
+    
+    <div style="margin-bottom: 15px;">
+      <label>💰 Price</label>
+      <input id="price_slider" type="range" min="0" max="100" value="50" style="width: 100%;" onchange="update_places_ranking()">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label>🍕 Food</label>
+      <input id="food_slider" type="range" min="0" max="100" value="50" style="width: 100%;" onchange="update_places_ranking()">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label>🏔️ Mountains</label>
+      <input id="mountain_slider" type="range" min="0" max="100" value="50" style="width: 100%;" onchange="update_places_ranking()">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label>🌊 Sea</label>
+      <input id="sea_slider" type="range" min="0" max="100" value="50" style="width: 100%;" onchange="update_places_ranking()">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label>🗽 Culture</label>
+      <input id="culture_slider" type="range" min="0" max="100" value="50" style="width: 100%;" onchange="update_places_ranking()">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label>🚃 Quality of Life</label>
+      <input id="qdl_slider" type="range" min="0" max="100" value="50" style="width: 100%;" onchange="update_places_ranking()">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label>👷‍♂️ Quality of Work</label>
+      <input id="qdw_slider" type="range" min="0" max="100" value="50" style="width: 100%;" onchange="update_places_ranking()">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label>🍆 Quality of Fyiga</label>
+      <input id="qdf_slider" type="range" min="0" max="100" value="50" style="width: 100%;" onchange="update_places_ranking()">
+    </div>
+  </div>
+
+</div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
+
+ var all_places = []
+
+ function update_places_ranking() {
+  tmp = []
+  const max_score = 5 * 100 * 8
+  for (var i = 0; i < all_places.length; i++) {
+    var place = all_places[i]
+    place.final_score =
+      parseInt(document.getElementById("qdf_slider").value) * place.ff + 
+      parseInt(document.getElementById("qdl_slider").value) * place.Life + 
+      parseInt(document.getElementById("qdw_slider").value) * place.Work + 
+      parseInt(document.getElementById("price_slider").value) * (5-place.Prices) + 
+      parseInt(document.getElementById("culture_slider").value) * place.Culture + 
+      parseInt(document.getElementById("mountain_slider").value) * place.Mountains + 
+      parseInt(document.getElementById("sea_slider").value) * place.Sea + 
+      parseInt(document.getElementById("food_slider").value) * place.Food; 
+    place.final_score /= max_score
+
+    tmp.push(place)
+  }
+
+  tmp.sort(function(a, b) {
+    return b.final_score - a.final_score;
+  });
+
+  var inner = ""
+  for (var i = 0; i < 13; i++) {
+    var place = tmp[i]
+    inner += '<li style="\
+      padding: 12px; \
+      margin-bottom: 10px; \
+      border-radius: 10px; \
+      background: #f9f9f9; \
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05); \
+      display: flex; \
+      justify-content: space-between; \
+      align-items: center;\
+      font-size: 14px;\
+      color: #333;">\
+        <span style="font-weight: 600;">' + place.Name + '</span>\
+        <span style="\
+          background: #4CAF50; \
+          color: white; \
+          padding: 4px 8px; \
+          border-radius: 8px; \
+          font-size: 12px;">\
+          ' + (place.final_score*100).toFixed(0) + '% \
+        </span>\
+    </li>';
+
+  }
+
+  var blocks_container = document.getElementById("blocks_container")
+  blocks_container.innerHTML = inner  
+ }
+  
  const map = L.map('map').setView([20, 0], 2); // World view
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
@@ -68,9 +202,10 @@
 
       Object.entries(grouped).forEach(([key, data]) => {
         const [lat, lon] = key.split(',').map(parseFloat);
-        const avg = Object.fromEntries(
+        var avg = Object.fromEntries(
           Object.entries(data.sum).map(([k, v]) => [k, v / data.count])
         );
+        avg.Name = data.locations.join(', '); 
 
         const popup = `
           <div>
@@ -85,6 +220,8 @@
             ${starRow("Quality of Fyiga", avg.ff, "🍆")}
           </div>
         `;
+
+        all_places.push(avg); 
 
         L.marker([lat, lon])
           .addTo(map)
