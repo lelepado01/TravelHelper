@@ -164,12 +164,16 @@
         const fields = row.split(',');
         if (fields.length < 11) return;
 
-        const [Timestamp, Location, Prices, Food, Mountains, Sea, Culture, Work, Life, latStr, lonStr, ff] = fields.map(f => f.trim());
+        const [Timestamp, Location, Prices, Food, Mountains, Sea, Culture, Work, Life, latStr, lonStr, ff, scopus] = fields.map(f => f.trim());
         const lat = parseFloat(latStr);
         const lon = parseFloat(lonStr);
+        var s = "vacation"
+        if (scopus.includes("Work")) {
+          s = "work"
+        }  
 
         if (!isNaN(lat) && !isNaN(lon)) {
-          const key = `${lat},${lon}`;
+          const key = `${lat},${lon},${s}`;
 
           if (!grouped[key]) {
             grouped[key] = {
@@ -201,7 +205,9 @@
       };
 
       Object.entries(grouped).forEach(([key, data]) => {
-        const [lat, lon] = key.split(',').map(parseFloat);
+        var [lat, lon, scopus] = key.split(',');
+        lat = parseFloat(lat); 
+        lon = parseFloat(lon); 
         var avg = Object.fromEntries(
           Object.entries(data.sum).map(([k, v]) => [k, v / data.count])
         );
@@ -223,9 +229,19 @@
 
         all_places.push(avg); 
 
-        L.marker([lat, lon])
-          .addTo(map)
-          .bindPopup(popup);
+        if (scopus == "work"){
+          L.marker([lat, lon]).addTo(map).bindPopup(popup);
+        } else {
+          var greenIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
+          L.marker([lat, lon], icon=greenIcon).addTo(map).bindPopup(popup);
+        }
       });
     });
     </script>
